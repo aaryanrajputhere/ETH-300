@@ -2,18 +2,19 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 
 export async function GET() {
-    const API_KEY = process.env.API_NINJAS_KEY;
+    const CMC_API_KEY = process.env.CMC_API_KEY;
     const EXCHANGE_RATE_API_KEY = process.env.EXCHANGE_RATE_API_KEY;
 
-    if (!API_KEY) {
-        return NextResponse.json({ error: "not able to fetch" }, { status: 500 });
+    if (!CMC_API_KEY) {
+        return NextResponse.json({ error: "CMC API key missing" }, { status: 500 });
     }
 
     try {
-        const [ethResponse, exchangeResponse] = await Promise.all([
-            axios.get('https://api.api-ninjas.com/v1/cryptoprice?symbol=ETHUSD', {
+        const [cmcResponse, exchangeResponse] = await Promise.all([
+            axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=1027', {
                 headers: {
-                    'X-Api-Key': API_KEY
+                    'X-CMC_PRO_API_KEY': CMC_API_KEY,
+                    'Accept': 'application/json'
                 }
             }),
             axios.get(`https://v6.exchangerate-api.com/v6/${EXCHANGE_RATE_API_KEY}/latest/USD`).catch(err => {
@@ -22,15 +23,18 @@ export async function GET() {
             })
         ]);
 
+        const ethData = cmcResponse.data.data["1027"];
+        const ethPrice = ethData.quote.USD.price;
         const inrRate = exchangeResponse?.data?.conversion_rates?.INR || 83.5;
 
         return NextResponse.json({
-            ...ethResponse.data,
+            symbol: "ETHUSD",
+            price: ethPrice.toFixed(2),
             inrRate,
             isMock: false
         });
     } catch (error) {
-        console.error("Error fetching ETH price:", error.response?.data || error.message);
+        console.error("Error fetching ETH price from CMC:", error.response?.data || error.message);
         return NextResponse.json({ error: 'Failed to fetch Ethereum price.' }, { status: 500 });
     }
 }
