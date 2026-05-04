@@ -92,19 +92,35 @@ export default function Home() {
 
         {error && <div className="error-msg">{error}</div>}
 
-        <div className="price-container">
-          <span className="price-label">Current ETH Price</span>
-          <div className="price-value">
-            <span className="currency-symbol">{currSym}</span>
-            {loading && !ethData ? (
-              <span className="animate-pulse">---.--</span>
-            ) : (
-              <span>
-                {currentPrice.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </span>
+        <div className="price-container" style={{ textAlign: 'left' }}>
+          <span className="price-label">Total Portfolio Value</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+            <div className="price-value" style={{ fontSize: '3rem' }}>
+              <span className="currency-symbol">{currSym}</span>
+              {loading && !ethData ? (
+                <span className="animate-pulse">---.--</span>
+              ) : (
+                <span>
+                  {portfolioValue.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              )}
+            </div>
+            {currentPrice > 0 && (
+              <div className={`gain-box ${isProfit ? 'profit-positive' : 'profit-negative'}`}>
+                <span className="gain-value">
+                  {isProfit ? '+' : '-'}{currSym}{Math.abs(totalProfit).toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+                <span className="gain-pct">
+                  ({isProfit ? '+' : ''}{profitPercentage.toFixed(2)}%)
+                </span>
+              </div>
             )}
           </div>
           
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.5rem', display: 'block' }}>
+            {TOTAL_ETH} ETH • Bought 9 Feb 2026 ({monthsPassed > 0 ? `${monthsPassed} months ago` : 'less than a month ago'})
+          </span>
+
           {ethData?.isMock && (
             <div className="mock-badge">
               Demo Mode (Using mock data)
@@ -120,22 +136,11 @@ export default function Home() {
           
           <div className="total-holdings">
             <div className="holdings-main">
-              <span className="holdings-label">Total Holdings ({TOTAL_ETH} ETH)</span>
-              <span className="holdings-value">{currSym}{portfolioValue.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem', display: 'block' }}>
-                Bought 9 Feb 2026 ({monthsPassed > 0 ? `${monthsPassed} months ago` : 'less than a month ago'})
+              <span className="holdings-label">Current ETH Price</span>
+              <span className="holdings-value">
+                {currSym}{currentPrice.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
-            {currentPrice > 0 && (
-              <div className={`gain-box ${isProfit ? 'profit-positive' : 'profit-negative'}`}>
-                <span className="gain-value">
-                  {isProfit ? '+' : '-'}{currSym}{Math.abs(totalProfit).toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                <span className="gain-pct">
-                  ({isProfit ? '+' : ''}{profitPercentage.toFixed(2)}%)
-                </span>
-              </div>
-            )}
           </div>
 
           <div className="holdings-list">
