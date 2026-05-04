@@ -118,7 +118,7 @@ export default function Home() {
           </div>
 
           <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.5rem', display: 'block' }}>
-            {TOTAL_ETH} ETH • Bought 9 Feb 2026 ({monthsPassed > 0 ? `${monthsPassed} months ago` : 'less than a month ago'})
+            Bought {TOTAL_ETH} ETH for ${TOTAL_COST} on 9 Feb 2026 ({monthsPassed > 0 ? `${monthsPassed} months ago` : 'less than a month ago'})
           </span>
 
           {ethData?.isMock && (
